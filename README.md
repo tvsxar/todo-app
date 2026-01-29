@@ -18,13 +18,13 @@ This project demonstrates a task management system where users can create, read,
 
 This application allows users to:
 
-- View all tasks
-- Create new tasks
-- Edit existing tasks
-- Delete tasks
+- Manage tasks with a fully functional GraphQL API
+- Create, Read, Update, and Delete (CRUD) todos
+- Experience a type-safe development environment with TypeScript
+- Connect to a cloud-based PostgreSQL database (Neon.tech)
 
-The backend is implemented using **Node.js** with **Express.js** connected to a **PostgreSQL** via the `pg` library and now exposing a GraphQL API.\
-The frontend is built with React (Vite) and communicates with the backend via GraphQL queries and mutations.
+The backend is built with **Node.js**, **Express**, and **GraphQL**.\
+The frontend is built with **React (Vite)**, **TypeScript**, and **Tailwind CSS**.
 
 > **Note:** Authentication is not implemented yet, so all users can modify the database.
 
@@ -45,6 +45,8 @@ The frontend is built with React (Vite) and communicates with the backend via Gr
 - **GraphQL / graphql-http:** backend GraphQL API to query and mutate todo data.
 - **pg:** Node.js library for connecting to PostgreSQL.
 - **CORS:** allows frontend to communicate with backend on a different port.
+- **Tailwind CSS** — Utility-first styling
+- **Docker & Docker Compose** — For containerization and environment orchestration
 
 This stack is known as **PERN**, with the addition of GraphQL for modern API design.
 
@@ -55,6 +57,7 @@ This stack is known as **PERN**, with the addition of GraphQL for modern API des
 3. **Resolvers** handle database queries via pg and return data.
 4. **PostgreSQL** stores the todo data.
 5. **Frontend** updates UI based on response.
+6. In development, **Docker Volumes** enable instant Hot Reload for both TS services.
 
 > Example: Adding a todo:
 >
@@ -64,63 +67,64 @@ This stack is known as **PERN**, with the addition of GraphQL for modern API des
 
 ## Installation & Run
 
-### Backend
+### 1. The Quickest Way (Docker Compose)
 
-1. Navigate to the backend folder:
+_Requires [Docker](https://www.docker.com/get-started/)_
+
+1. Create a `.env` file inside `backend/` (see variables below)
+2. Run everything with one command:
+   ```bash
+   docker-compose up --build
+   ```
+3. Open http://localhost:5173 in your browser
+
+### 2. Manual Setup (For Development)
+
+If you want to run the services separately without Docker:
+
+#### Backend
 
 ```bash
 cd backend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-npm i express pg cors dotenv graphql graphql-http typescript ts-node nodemon @types/node @types/pg
-```
-
-3. Create a `.env` file with database connection:
-
-```env
-PORT=4999
-CONNECTION_STRING=postgres://your_db_user:your_db_password@localhost:5432/your_db_name
-```
-
-4. Start the server:
-
-```bash
+npm install dotenv cors express pg nodemon grahpql graphql-http
+# Create .env with PORT, CONNECTION_STRING, CLIENT_URL
 npm run dev
 ```
 
-### Frontend
+Backend .env variables:
+```bash
+PORT=4999
+CONNECTION_STRING=postgres://user:password@host/neondb?sslmode=require
+```
 
-1. Navigate to the frontend folder:
+---
+
+#### Frontend
 
 ```bash
 cd frontend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-npm i react-icons
-npm i tailwindcss @tailwindcss/vite react-icons typescript @types/react @types/react-dom
-```
-
-3. Start the frontend:
-
-```bash
+npm install @tailwindcss/vite tailwindcss
+# Create .env with VITE_API_URL
 npm run dev
 ```
 
-Frontend will be available at `http://localhost:5173` by default.
+Frontend .env variables:
+```bash
+VITE_API_URL=http://localhost:4999
+```
+
+Frontend will be available at:
+http://localhost:5173
+
+---
 
 ## Project Structure
 
 ```
 todo/
+├─ docker-compose.yml
 ├─ backend/
+│  ├─ Dockerfile
 │  ├─ config/
 │  │  └─ db.js          # PostgreSQL connection pool
 │  ├─ resolvers/
@@ -130,6 +134,7 @@ todo/
 │  ├─ index.ts          # Express + GraphQL server
 │  └─ package.json
 ├─ frontend/
+│  ├─ Dockerfile
 │  ├─ src/
 │  │  ├─ App.tsx        # Main App component
 │  │  ├─ main.tsx       # Entry point
